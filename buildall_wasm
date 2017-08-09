@@ -13,7 +13,7 @@ libpcsxcore/cdriso.c libpcsxcore/ppf.c   \
 plugins/dfxvideo/cfg.c   plugins/dfxvideo/fps.c plugins/dfxvideo/key.c \
 plugins/dfxvideo/prim.c  plugins/dfxvideo/zn.c plugins/dfxvideo/draw.c  \
 plugins/dfxvideo/gpu.c   plugins/dfxvideo/soft_modified.c \
-plugins/nullspu/spunull.c \
+plugins/dfsound/sdl.c plugins/dfsound/spu.c plugins/dfsound/cfg.c  plugins/dfsound/dma.c plugins/dfsound/registers.c \
 plugins/sdlinput/cfg.c     plugins/sdlinput/pad.c     plugins/sdlinput/xkb.c  \
 plugins/sdlinput/sdljoy.c plugins/sdlinput/analog.c \
  -lm -lSDL
