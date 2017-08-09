@@ -240,17 +240,21 @@ void CALLBACK clearDynarec(void) {
 int LoadPlugins() {
 	int ret;
 	char Plugin[MAXPATHLEN];
-	printf("LoadPlugins()");
+	printf("LoadPlugins()\n");
 	cdrIsoInit();
+	printf("cdrisoInit done\n");
 
 	Config.UseNet = FALSE;
 
 	ret = CDR_init();
 	if (ret < 0) { SysMessage (_("Error initializing CD-ROM plugin: %d"), ret); return -1; }
+    else printf("cdr_init done\n");
 	ret = GPU_init();
 	if (ret < 0) { SysMessage (_("Error initializing GPU plugin: %d"), ret); return -1; }
+    else printf("gpu_init done\n");
 	ret = SPU_init();
 	if (ret < 0) { SysMessage (_("Error initializing SPU plugin: %d"), ret); return -1; }
+    else printf("spu_init done\n");
 	ret = PAD1_init(1);
 	if (ret < 0) { SysMessage (_("Error initializing Controller 1 plugin: %d"), ret); return -1; }
 	ret = PAD2_init(2);

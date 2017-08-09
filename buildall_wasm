@@ -1,4 +1,4 @@
-emcc -O3 -Wno-unused-result  -o pcsx.html \
+emcc -O3 -Wno-unused-result  -o pcsx.html -D USESDLSOUND \
  -s USE_ZLIB=1 -s AGGRESSIVE_VARIABLE_ELIMINATION=1 \
 -s TOTAL_MEMORY=536870912 --llvm-lto 1 -s WASM=1 --shell-file shell.html \
 -s EXPORTED_FUNCTIONS="['_main',  '_run']" \

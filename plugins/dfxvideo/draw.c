@@ -97,12 +97,12 @@ SDL_Rect srcrect;
 SDL_Rect dstrect;
 void CreateDisplay(void)
 {
-if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK)<0)
+if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK|SDL_INIT_AUDIO)<0)
    {
 	  printf ("(x) Failed to Init SDL!!!\n");	  
    }
 else {
-  printf("sdl subsystem ok\n");
+  printf("gpu sdl init ok\n");
   sdl_display = SDL_SetVideoMode(iResX,iResY, depth,SDL_HWSURFACE);
   sdl_ximage= SDL_CreateRGBSurface(SDL_HWSURFACE,iResX,iResY,depth,0x00ff0000,0x0000ff00,0x000000ff,0);
 }
