@@ -10,39 +10,48 @@ function cout_print(s){
 function set_progress(r){
 	postMessage({cmd:"setProgress", properties:r});
 }
-function snes_init(){
-      reboot_emulator=Module.cwrap('reboot_emulator', 'number', ['string'])
-	   native_set_joypad_state=Module._native_set_joypad_state
-	   native_bitmap_pointer=Module._native_bitmap_pointer
-	   mainloop=Module._mainloop
-	   renderscreen=Module._renderscreen
-	   palf=reboot_emulator("/_.smc")	
-	   native_set_joypad_state(0x80000000)
-	   frameskip=0
 
-           }
-function snes_mainloop(){		
-		for(var _i=0;_i<=frameskip;_i++)
-		  mainloop(palf ? 312 :262)		
-		renderscreen()		  
-		var bitmap=native_bitmap_pointer(-16,0)>>2		
-		var src=i.subarray(bitmap,bitmap+288*224)  // // Unstable Hack: i is Heap32 compiled by closure
-		var buffer=new ArrayBuffer(4*288*224)
-		var src2=new Uint32Array(buffer)			// WW2
-		for(var _i=0;_i<288*224;_i++) src2[_i]=src[_i]		// WW2
-		postMessage({cmd:"render2", src:buffer}, [buffer])    // WW2
-		postMessage({cmd:"render", src:src})			// WW1
-		setTimeout("snes_mainloop()", 0);	      
-}
+
  Module['print'] = cout_print;
+ var x_ptr, y_ptr, dx_ptr, dy_ptr, rgb24_ptr, vram_ptr;
+var vram_arrs=[];
+ var render = function()  {
+	 var vram_arr;
+	 var vram_src = Module.HEAPU8.subarray(vram_ptr, vram_ptr+480*2048);
+	 if(vram_arrs.length>0){
+		 vram_arr=vram_arrs.pop();
+		 vram_arr.set(vram_src);
+		}
+	 else{
+		cout_print("create vram\n");
+	 	vram_arr = new Uint8Array(vram_src);
+	 }
+	 postMessage({cmd: "render", 
+	 		x:getValue(x_ptr, 'i32'),
+		y:getValue(y_ptr, 'i32'),
+		 		dx:getValue(dx_ptr, 'i16'),
+		dy:getValue(dy_ptr, 'i32'),
+		rgb24: getValue(rgb24_ptr, 'i32'),
+		vram: vram_arr
+}, [vram_arr.buffer]);
+ } 
 
- var render = function(){
-	 postMessage({cmd: "render"});
- }
-onmessage=function(event) {  
+
+ function pcsx_mainloop(){
+	 _one_iter()
+	 render();
+	 setTimeout("pcsx_mainloop()", 0);	      
+}
+onmessage=function(event)  {  
   var data=event.data;
 	//cout_print("worker onmessage\n");
   switch(data.cmd){
+		case "padStatus":
+      _set_KeyStatus(0, data.KeyStatus0);
+    break;
+		case "return_vram":
+			vram_arrs.push(data.vram)
+		break;
     case "loadfile": 
     		Module.setStatus('Downloading...');
 	      var f=data.file;
@@ -62,17 +71,17 @@ onmessage=function(event) {
 		  Module.FS_createDataFile("/", "_.bin", new Uint8Array(this.result) , true, true);
       Module.setStatus('Running...');
       Module._pcsx_init();
-			postMessage({cmd:"emulatorReady"});
+			x_ptr = _get_render_param_ptr(0);
+			y_ptr = _get_render_param_ptr(1);
+			dx_ptr = _get_render_param_ptr(2);
+			dy_ptr = _get_render_param_ptr(3);
+			rgb24_ptr = _get_render_param_ptr(4);
+			vram_ptr = _get_render_param_ptr(5);
+			pcsx_mainloop();
 		}	      
        reader.readAsArrayBuffer(f);
 	break
-    case "one_iter":
-      _one_iter()
-			render();
-      break
-    case "joy1":
-      native_set_joypad_state(data.state)
-      break
+
     case "frameskip":
       frameskip=data.value
       break
@@ -80,4 +89,4 @@ onmessage=function(event) {
       postMessage({cmd:"print", txt:"unknown command "+data.cmd})
   }
 }
-postMessage({cmd:"print", txt:"worker started\n"})
+cout_print("worker started\n");

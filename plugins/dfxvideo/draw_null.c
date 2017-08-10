@@ -67,6 +67,7 @@ void CreateDisplay(void)
 
 void DoBufferSwap(void)
 {  
+   // printf("%d %d %d %d\n", PSXDisplay.DisplayPosition.x, PSXDisplay.DisplayPosition.y, PreviousPSXDisplay.Range.x1, PreviousPSXDisplay.DisplayMode.y);
 
 }
 
@@ -89,7 +90,18 @@ void CloseDisplay(void)
  DestroyDisplay();
 }
 
-
+void * render_params_ptrs[] ={&(PSXDisplay.DisplayPosition.x), 
+                    &(PSXDisplay.DisplayPosition.y),
+                    &(PreviousPSXDisplay.Range.x1),
+                    &(PreviousPSXDisplay.DisplayMode.y),
+                    &PSXDisplay.RGB24                              
+                    };
+void * get_render_param_ptr(int i){
+    if(i==5){
+        return psxVub;
+    }
+    return render_params_ptrs[i];
+}
 
 
 void ShowGpuPic(void)
