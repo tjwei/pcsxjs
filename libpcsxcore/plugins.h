@@ -213,7 +213,7 @@ void (SPUplayCDDAchannel)(short *, int);
 #define SPU_playADPCMchannel SPUplayADPCMchannel
 #define SPU_freeze           SPUfreeze
 #define SPU_registerCallback SPUregisterCallback
-#define SPU_async            SPUasync
+//#define SPU_async            SPUasync
 #define SPU_playCDDAchannel  SPUplayCDDAchannel
 
 // PAD Functions
