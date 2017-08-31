@@ -98,6 +98,7 @@ void CloseDisplay(void)
  DestroyDisplay();
 }
 extern unsigned long SoundGetBytesBuffered_value;
+int isMute=0;
 void *get_PadState_ptr();
 void * params_ptrs[] ={&(PSXDisplay.DisplayPosition.x), 
                     &(PSXDisplay.DisplayPosition.y),
@@ -106,7 +107,8 @@ void * params_ptrs[] ={&(PSXDisplay.DisplayPosition.x),
                     &PSXDisplay.RGB24,
                     &PSXDisplay.DisplayMode.x,
                     &PSXDisplay.DisplayMode.y,
-                    &SoundGetBytesBuffered_value                        
+                    &SoundGetBytesBuffered_value,
+                    &isMute,                      
                     };
 void * get_ptr(int i){
     if(i==-1)   return psxVub;    

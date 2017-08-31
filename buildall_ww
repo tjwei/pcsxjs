@@ -1,6 +1,0 @@
-./buildall_ww1
-./buildall_ww2
-
-# plugins/nullspu/spunull.c \
-#plugins/dfsound/sdl.c plugins/dfsound/dma.c plugins/dfsound/freeze.c plugins/dfsound/cfg.c \
-#plugins/dfsound/spu.c  plugins/dfsound/xa.c plugins/dfsound/registers.c \

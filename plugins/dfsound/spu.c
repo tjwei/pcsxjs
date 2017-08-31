@@ -768,10 +768,14 @@ ENDX:   ;
 
 // SPU ASYNC... even newer epsxe func
 //  1 time every 'cycle' cycles... harhar
-
+extern int isMute;
 void CALLBACK SPUasync(unsigned long cycle)
 {  
-
+  //printf("ismute %d\n",isMute);
+if(isMute) {
+//  printf("ismute\n");
+  return;}
+  
  //printf("spuasync %d %d\n", bSpuInit, iSpuAsyncWait);
  if(iSpuAsyncWait)
   {

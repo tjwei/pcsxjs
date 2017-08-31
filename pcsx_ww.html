@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>PCSX emulator(port by tjw, compiled by emscripten)</title>
+  <link rel="stylesheet" type="text/css" href="pcsx.css">
+</head>
+
+<body>
+  <h1>
+    PCSX emulator (compiled by emscripten)
+  </h1>
+
+  <div>
+    <hr />
+
+  </div>
+
+  <hr />
+
+ 
+
+  <div id="pcsx_app" class="main">  
+    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>    
+  </div>
+
+
+    <div class="control" id="control" >
+    
+    </div>
+    <div>
+        <input type='button' onclick="Module.goFullscreen()" value='Fullscreen'>            
+          </div>    <input type="file" 
+        id="iso_opener" 
+        onchange="pcsx_readfile(this)" 
+        disabled=true />
+      </div>
+  <div v-if="show_info" class="infobox">
+    <div class="spinner" id='spinner'></div>
+    <div class="emscripten" id="status"> 
+      The file open button will be enabled once the UI initialized.        
+       </div>
+    <div>
+        Read file:
+        <progress max=100 id="readfile_progress">
+        </progress>
+      </div>
+
+      <div style="clear: left" >
+          After loading the game,may need to click the white space of webpage to obtain keyboard focus.
+          </div>
+          <pre>
+            Key mappings:
+            g.cfg.PadDef[0].KeyDef[DKEY_SELECT].Key = SDLK_c;
+            g.cfg.PadDef[0].KeyDef[DKEY_START].Key = SDLK_v;
+            g.cfg.PadDef[0].KeyDef[DKEY_UP].Key = SDLK_UP;
+            g.cfg.PadDef[0].KeyDef[DKEY_RIGHT].Key = SDLK_RIGHT;
+            g.cfg.PadDef[0].KeyDef[DKEY_DOWN].Key = SDLK_DOWN;
+            g.cfg.PadDef[0].KeyDef[DKEY_LEFT].Key = SDLK_LEFT;
+            g.cfg.PadDef[0].KeyDef[DKEY_L2].Key = SDLK_e;
+            g.cfg.PadDef[0].KeyDef[DKEY_R2].Key = SDLK_t;
+            g.cfg.PadDef[0].KeyDef[DKEY_L1].Key = SDLK_w;
+            g.cfg.PadDef[0].KeyDef[DKEY_R1].Key = SDLK_r;
+            g.cfg.PadDef[0].KeyDef[DKEY_TRIANGLE].Key = SDLK_d;
+            g.cfg.PadDef[0].KeyDef[DKEY_CIRCLE].Key = SDLK_x;
+            g.cfg.PadDef[0].KeyDef[DKEY_CROSS].Key = SDLK_z;
+            g.cfg.PadDef[0].KeyDef[DKEY_SQUARE].Key = SDLK_s;          
+          </pre>
+          XBox Cotrollers also work, but currently only maps to chrome/windows.
+  </div>
+
+  <script type='text/javascript' src="pcsx_ui.js"></script>
+  <script type="text/javascript" src="pcsx_ww.js"></script>
+  
+</body>
+
+</html>

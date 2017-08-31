@@ -33,7 +33,6 @@
 #include "../libpcsxcore/sio.h"
 
 #include "Linux.h"
-
 static void CreateMemcard(char *filename, char *conf_mcd)
 {
     struct stat buf;
@@ -189,6 +188,9 @@ void ls(const char *dirname)
 }
 int main(int argc, char *argv[])
 {
-    EM_ASM({FS.mkdir('/home/web_user/.pcsx');});
+    EM_ASM({ 
+        FS.mkdir('/home/web_user/.pcsx'); 
+        clear_event_history();  
+});
     emscripten_exit_with_live_runtime();
 }

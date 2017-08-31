@@ -1,0 +1,279 @@
+body {
+  font-family: arial;
+  margin: 0;
+  padding: none;
+}
+
+.emscripten {
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+div.emscripten {
+  text-align: center;
+}
+
+/* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+
+canvas.emscripten
+ {
+  border: 0px none;
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  top: 0;
+}
+
+
+#emscripten_logo {
+  display: inline-block;
+  margin: 0;
+}
+.infobox {
+    display: block;
+    float: left;    
+    top: 20%;
+    width: 90%;
+    left: 5%;
+    height: 70%;    
+    font-size: 16px;
+    color: white;
+    background-color: #000060;
+}
+.infobox progress {
+  width: 100%;
+  height: 1.5em;
+  float: left;
+  background: #606060;
+  color: green;
+
+}
+.infobox progress::-moz-progress-bar {background-color: green;}
+
+.main:-webkit-full-screen .infobox
+{
+  font-size:  5vh;
+}
+.main:-moz-full-screen .infobox {
+  font-size: 5vh;
+}
+
+
+
+.spinner {
+  height: 30px;
+  width: 30px;
+  margin: 0;
+  margin-top: 20px;
+  margin-left: 20px;
+  display: inline-block;
+  vertical-align: top;
+  -webkit-animation: rotation .8s linear infinite;
+  -moz-animation: rotation .8s linear infinite;
+  -o-animation: rotation .8s linear infinite;
+  animation: rotation 0.8s linear infinite;
+  border-left: 5px solid rgb(235, 235, 235);
+  border-right: 5px solid rgb(235, 235, 235);
+  border-bottom: 5px solid rgb(235, 235, 235);
+  border-top: 5px solid rgb(120, 120, 120);
+  border-radius: 100%;
+  background-color: rgb(189, 215, 46);
+}
+
+@-webkit-keyframes rotation {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@-moz-keyframes rotation {
+  from {
+    -moz-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+  }
+}
+
+@-o-keyframes rotation {
+  from {
+    -o-transform: rotate(0deg);
+  }
+  to {
+    -o-transform: rotate(360deg);
+  }
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#status {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 30px;
+  margin-left: 20px;
+  font-weight: bold;
+  color: rgb(120, 120, 120);
+}
+
+#progress {
+  height: 20px;
+  width: 200px;
+}
+
+#output {
+  width: 100%;
+  height: 200px;
+  margin: 0 auto;
+  margin-top: 10px;
+  border-left: 0px;
+  border-right: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  display: block;
+  background-color: black;
+  color: white;
+  font-family: 'Lucida Console', Monaco, monospace;
+  outline: none;
+}
+
+
+.main {
+  position: relative;
+  width: 720px;
+  height: 540px;
+  display: block;
+  margin: auto;
+}
+
+.main:-webkit-full-screen {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    margin: auto;
+    background-color: black;
+  }
+
+
+.main .control {
+  display: block;
+  width: 100%;
+  height: 5%;
+  bottom: 0;
+  /* Full height */
+  /*overflow: auto;*/
+  color: white;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(70, 70, 70, 0.7);
+  /* Black w/ opacity */
+  vertical-align: middle;  
+}
+
+#filter_menu {
+  display: block;
+  width: 7em;
+  bottom: 130%;
+  left: 25%;
+  position: absolute;
+  /* Stay in place */
+  z-index: 1;
+  /* Full height */
+  /*overflow: auto;*/
+  color: white;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(70, 70, 70, 0.7);
+  /* Black w/ opacity */
+  vertical-align: middle;  
+}
+#filter_menu  .filter_menu_entry {
+  width: 100%;
+  height: 1.5em;
+  display: block;
+  position: relative;    
+}
+#filter_menu  .filter_check_box {
+  width: 1em;
+  height: 100%;
+  float: left;
+  position: relative;
+
+}
+#filter_menu .filter_name_field {
+  width: 5em;
+  height: 100%;
+  float: left;
+  position: relative;
+
+}
+
+.control div {
+    display: block;
+    height: 100%;
+    float: left;
+    font-size: 18px;
+    align-items: center;
+    justify-content: center;
+    width: 10%;
+    opacity: 70%;
+    color: white;
+    background-color:rgba(189, 180, 80, 0);
+    padding: 1;
+    text-align: center;
+    border: 3px solid rgba(0,0,0,.0);
+    margin: 2;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+.control div p {
+  margin: 0.1em;
+}
+.control div img{
+  height: 100%;
+  background-color: rgba(0,0,0,0);
+}     
+                       
+.main:-webkit-full-screen .control div{
+    font-size: 4vh;
+  }
+
+.main:-moz-full-screen .control div{
+    font-size: 4vh;
+  }
+
+
+
+
+
+.slide-fade-enter-active {
+    transition: all .3s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active below version 2.1.8 */ {
+    transform: translateY(100%);
+    opacity: 0;
+  }

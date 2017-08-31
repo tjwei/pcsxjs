@@ -18,14 +18,13 @@
 
 #include "pad.h"
 
-#define CONFIG_FILE		"dfinput.cfg"
+#define CONFIG_FILE		"/cfg/dfinput.cfg"
 
 GLOBALDATA			g;
-
-static void SetDefaultConfig() {
+void SetDefaultConfig() {
 	memset(&g.cfg, 0, sizeof(g.cfg));
 
-	g.cfg.Threaded = 1;
+	g.cfg.Threaded = 0;
 
 	g.cfg.PadDef[0].DevNum = 0;
 	g.cfg.PadDef[1].DevNum = 1;
@@ -52,9 +51,9 @@ static void SetDefaultConfig() {
 	// Pad1 joystick
 	// Xbox 360 controller setting
 	g.cfg.PadDef[0].KeyDef[DKEY_SELECT].JoyEvType = BUTTON;
-	g.cfg.PadDef[0].KeyDef[DKEY_SELECT].J.Button = 6;
+	g.cfg.PadDef[0].KeyDef[DKEY_SELECT].J.Button = 8;
 	g.cfg.PadDef[0].KeyDef[DKEY_START].JoyEvType = BUTTON;
-	g.cfg.PadDef[0].KeyDef[DKEY_START].J.Button = 7;
+	g.cfg.PadDef[0].KeyDef[DKEY_START].J.Button = 9;
 	g.cfg.PadDef[0].KeyDef[DKEY_UP].JoyEvType = AXIS;
 	g.cfg.PadDef[0].KeyDef[DKEY_UP].J.Axis = -2;
 	g.cfg.PadDef[0].KeyDef[DKEY_RIGHT].JoyEvType = AXIS;
@@ -66,11 +65,11 @@ static void SetDefaultConfig() {
 	g.cfg.PadDef[0].KeyDef[DKEY_L2].JoyEvType = BUTTON;
 	g.cfg.PadDef[0].KeyDef[DKEY_L2].J.Button = 4;
 	g.cfg.PadDef[0].KeyDef[DKEY_L1].JoyEvType = BUTTON;
-	g.cfg.PadDef[0].KeyDef[DKEY_L1].J.Button = 9;
+	g.cfg.PadDef[0].KeyDef[DKEY_L1].J.Button = 6;
 	g.cfg.PadDef[0].KeyDef[DKEY_R2].JoyEvType = BUTTON;
-	g.cfg.PadDef[0].KeyDef[DKEY_R2].J.Button = 5;
+	g.cfg.PadDef[0].KeyDef[DKEY_R2].J.Button = 7;
 	g.cfg.PadDef[0].KeyDef[DKEY_R1].JoyEvType = BUTTON;
-	g.cfg.PadDef[0].KeyDef[DKEY_R1].J.Button = 10;
+	g.cfg.PadDef[0].KeyDef[DKEY_R1].J.Button = 5;
 	g.cfg.PadDef[0].KeyDef[DKEY_TRIANGLE].JoyEvType = BUTTON;
 	g.cfg.PadDef[0].KeyDef[DKEY_TRIANGLE].J.Button = 3;
 	g.cfg.PadDef[0].KeyDef[DKEY_CIRCLE].JoyEvType = BUTTON;
@@ -120,12 +119,14 @@ void LoadPADConfig() {
 
 	fp = fopen(CONFIG_FILE, "r");
 	if (fp == NULL) {
+		printf("cannot open %s\n", CONFIG_FILE);
 		return;
 	}
 
 	current = 0;
 
 	while (fgets(buf, 256, fp) != NULL) {
+		/*printf("read: %s", buf);*/
 		if (strncmp(buf, "Threaded=", 9) == 0) {
 			g.cfg.Threaded = atoi(&buf[9]);
 		} else if (strncmp(buf, "[PAD", 4) == 0) {
@@ -271,6 +272,7 @@ void SavePADConfig() {
 
 	fp = fopen(CONFIG_FILE, "w");
 	if (fp == NULL) {
+		printf("cannot open %s\n", CONFIG_FILE);
 		return;
 	}
 
@@ -344,4 +346,18 @@ void SavePADConfig() {
 	}
 
 	fclose(fp);
+	/*
+	char		buf[256];
+
+	fp = fopen(CONFIG_FILE, "r");
+	if (fp == NULL) {
+		printf("cannot open %s\n", CONFIG_FILE);
+		return;
+	}
+
+
+	while (fgets(buf, 256, fp) != NULL) 
+		printf("write: %s", buf);
+	fclose(fp);
+	*/
 }

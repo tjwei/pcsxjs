@@ -180,9 +180,13 @@ static int iSecureStart=0; // secure start counter
 
 ////////////////////////////////////////////////////////////////////////
 
-
+extern int isMute;
 void CALLBACK SPUasync(unsigned long cycle)
 {
+ if(isMute){
+     printf("mute....\n");
+    return;
+ }
  //printf("spuasync %d %d\n", bSpuInit, iSpuAsyncWait);
  if(iSpuAsyncWait)
   {
