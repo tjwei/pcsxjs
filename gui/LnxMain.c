@@ -33,7 +33,7 @@
 #include "../libpcsxcore/sio.h"
 
 #include "Linux.h"
-
+int isMute=0;
 static void CreateMemcard(char *filename, char *conf_mcd)
 {
     struct stat buf;
