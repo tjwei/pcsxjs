@@ -55,6 +55,8 @@ char* disR3000AF(u32 code, u32 pc);
 
 //#define PSXHW_LOG   __Log("%8.8lx %8.8lx: ", psxRegs.pc, psxRegs.cycle); __Log
 //#define PSXBIOS_LOG __Log("%8.8lx %8.8lx: ", psxRegs.pc, psxRegs.cycle); __Log
+//#define PSXBIOS_LOG printf("%s\n", __FUNCTION__);printf
+
 //#define PSXDMA_LOG  __Log
 //#define PSXMEM_LOG  __Log("%8.8lx %8.8lx: ", psxRegs.pc, psxRegs.cycle); __Log
 //#define PSXCPU_LOG  __Log
@@ -63,7 +65,7 @@ char* disR3000AF(u32 code, u32 pc);
 
 #if defined (PSXCPU_LOG) || defined(PSXDMA_LOG) || defined(CDR_LOG) || defined(PSXHW_LOG) || \
 	defined(PSXBIOS_LOG) || defined(PSXMEM_LOG) || defined(GTE_LOG)    || defined(PAD_LOG)
-#define EMU_LOG __Log
+#define EMU_LOG printf
 #endif
 
 #ifdef __cplusplus

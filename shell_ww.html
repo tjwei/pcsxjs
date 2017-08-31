@@ -212,34 +212,104 @@
         };
       };
     </script>
+<script>
+var img_data32;
+function my_SDL_LockSurface(surf) {
+      var surfData = SDL.surfaces[surf];  
+      surfData.locked++;
+      if (surfData.locked > 1) return 0;
+  
+      if (!surfData.buffer) {
+        surfData.buffer = _malloc(surfData.width * surfData.height * 4);
+        cout_print("malloc "+surfData.buffer+"\n");
+        HEAP32[(((surf)+(20))>>2)]=surfData.buffer;
+      }
+  
+      // Mark in C/C++-accessible SDL structure
+      // SDL_Surface has the following fields: Uint32 flags, SDL_PixelFormat *format; int w, h; Uint16 pitch; void *pixels; ...
+      // So we have fields all of the same size, and 5 of them before us.
+      // TODO: Use macros like in library.js
+      HEAP32[(((surf)+(20))>>2)]=surfData.buffer;
+      if(!surfData.image){
+      surfData.image = surfData.ctx.getImageData(0, 0, surfData.width, surfData.height);    
+      }
+      return 0;
+    }
+function my_SDL_UnlockSurface(surf) {
+      assert(!SDL.GL); // in GL mode we do not keep around 2D canvases and contexts
+  
+      var surfData = SDL.surfaces[surf];
+  
+      if (!surfData.locked || --surfData.locked > 0) {
+        return;
+      }
+        var data = surfData.image.data;
+        var src = surfData.buffer>>2;
+      // Copy pixel data to image
+        if(!img_data32)
+        { img_data32 = new Uint32Array(data.buffer);}
+        img_data32.set(HEAP32.subarray(src, src + img_data32.length));
 
-    <script>  
-        cout_print = Module.print;
-            if (window.File && window.FileReader && window.FileList && window.Blob) {
+      surfData.ctx.putImageData(surfData.image, 0, 0);
+      // Note that we save the image, so future writes are fast. But, memory is not yet released
+    }
+</script>
+    <script>
+"use strict";
+var padStatus1;
+var padStatus2;
+var vram_ptr;
+var cout_print = Module.print;
+var pcsx_worker= new Worker("pcsx_worker.js");
+var SoundFeedStreamData;
+
+
+
+
+
+function var_setup(){
+  SoundFeedStreamData = Module.cwrap("SoundFeedStreamData", "null", ["number", "number"]);
+  vram_ptr = _get_ptr(0);
+  padStatus1 = _get_ptr(1);
+  padStatus2 = _get_ptr(2);
+  SDL.defaults.copyOnLock=false;
+  SDL.defaults.opaqueFrontBuffer=false;    
+}
+if (window.File && window.FileReader && window.FileList && window.Blob) {
 	    } else {
 	        alert('The File APIs are not fully supported in this browser.')
                 cout_print('The File APIs are not fully supported in this browser.');
 	    }
-var check_controller = function(){
-              _CheckKeyboard();
-          var stat = _get_KeyStatus(0);
+var states_arrs=[];
+var check_controller = function(){          
+          _CheckJoy();
+          _CheckKeyboard();
+          var states_src = Module.HEAPU8.subarray(padStatus1, padStatus1+48);
+          var states_arr;
+          while(states_arrs.length>50){
+		          states_arrs.pop();		          
+	        }
+	        if(states_arrs.length>0){
+		          states_arr=states_arrs.pop();
+		          states_arr.set(states_src);
+		      }
+	 else{				
+	 	      states_arr = new Uint8Array(states_src);
+	 }          
           //if(stat!=65535)  cout_print(stat);
-          pcsx_worker.postMessage({ cmd: "padStatus", KeyStatus0: stat});
-          setTimeout("check_controller()", 10);
+          pcsx_worker.postMessage({ cmd: "padStatus", states: states_arr}, [states_arr.buffer]);
+          setTimeout("check_controller()", 10);          
 }
+
+
 var  pcsx_readfile = function (controller){
       cout_print("pcsx_readfile\n");
-      pcsx_worker.postMessage({ cmd: "loadfile", file: controller.files[0]});
-      vram_ptr = _get_ptr(0);
+      pcsx_worker.postMessage({ cmd: "loadfile", file: controller.files[0]});      
       setTimeout("check_controller()", 10);
       return;
  
     }
-    Module.setStatus('Load a pcsx iso or bin');      
-    </script>
-  <script>
-
-    pcsx_worker= new Worker("pcsx_worker.js");   
+    Module.setStatus('Load a pcsx iso or bin');             
 
     pcsx_worker.onmessage = function(event){	   
 	   var data=event.data
@@ -257,11 +327,21 @@ var  pcsx_readfile = function (controller){
         break      
 	    case "render":	   
           var vram_arr = data.vram;   
-          Module.HEAPU8.set(vram_arr, vram_ptr);                    
-          _render(data.x,data.y,data.dx,data.dy,data.rgb24);
-          pcsx_worker.postMessage({cmd: "return_vram", vram: vram_arr}, [vram_arr.buffer]);
+          Module.HEAPU8.set(vram_arr, vram_ptr);
+          pcsx_worker.postMessage({cmd: "return_vram", vram: vram_arr}, [vram_arr.buffer]);                  
+          _render(data.x,data.y, data.sx, data.sy, data.dx,data.dy,data.rgb24);
 	      break
-	    default:
+    case "return_states":
+			states_arrs.push(data.states)
+		break;
+      case "SoundFeedStreamData":	 
+          var pSound_arr = data.pSound;   
+          var pSound_ptr = Module._malloc(pSound_arr.length);
+          Module.HEAPU8.set(pSound_arr, pSound_ptr);
+          SoundFeedStreamData(pSound_ptr, data.lBytes);
+          Module._free(pSound_ptr);
+	      break
+	default:
 	      cout_print("unknown worker cmd "+data.cmd)
 	    }
 	  }

@@ -3,6 +3,8 @@ emcc -O3 -Wno-unused-result  -o pcsx_ww.html -D USESDLSOUND \
 --llvm-lto 1 -s WASM=1  \
 -s WASM=1 --shell-file shell_ww.html --llvm-lto 1 \
 plugins/sdlinput/cfg.c plugins/sdlinput/xkb.c gui/wwGUI.c \
--s EXPORTED_FUNCTIONS="['_main','_get_ptr', '_render','_LoadPADConfig', '_CheckKeyboard', '_get_KeyStatus' ]" \
+plugins/sdlinput/sdljoy.c plugins/sdlinput/analog.c \
+plugins/dfsound/sdl.c  \
+-s EXPORTED_FUNCTIONS="['_main','_get_ptr', '_render','_LoadPADConfig', '_CheckKeyboard', '_CheckJoy', '_SoundFeedStreamData', '_SoundGetBytesBuffered']" \
 -I./include -I./libpcsxcore \
 -lSDL

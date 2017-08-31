@@ -31,96 +31,139 @@
 
 #include "nopic.h"
 
-#define MAX_SLOTS 5	/* ADB TODO Same as Gtk2Gui.c */
+#define MAX_SLOTS 5 /* ADB TODO Same as Gtk2Gui.c */
 
 unsigned long gpuDisp;
 
 int StatesC = 0;
 int ShowPic = 0;
 
-
-
 static short modctrl = 0, modalt = 0;
 
 /* Handle keyboard keystrokes */
-void PADhandleKey(int key) {
-	char Text[MAXPATHLEN];
-	short rel = 0;	//released key flag
+void PADhandleKey(int key)
+{
+    char Text[MAXPATHLEN];
+    short rel = 0; //released key flag
 
-	if (key == 0)
-		return;
+    if (key == 0)
+	return;
 
-	if ((key >> 30) & 1)	//specific to dfinput (padJoy)
-		rel = 1;
-	
+    if ((key >> 30) & 1) //specific to dfinput (padJoy)
+	rel = 1;
 
-			
-	if(key==SDLK_ESCAPE)
-	{
-                        ClosePlugins();
-						exit(1);
-	}
-	//else GPU_keypressed(key);
-}
-
-
-void SignalExit(int sig) {
+    if (key == SDLK_ESCAPE)
+    {
 	ClosePlugins();
+	exit(1);
+    }
+    //else GPU_keypressed(key);
 }
 
-#define PARSEPATH(dst, src) \
-	ptr = src + strlen(src); \
-	while (*ptr != '\\' && ptr != src) ptr--; \
-	if (ptr != src) { \
-		strcpy(dst, ptr+1); \
-	}
-
-int _OpenPlugins() {
-	int ret;
-
-	GPU_clearDynarec(clearDynarec);
-
-	ret = CDR_open();
-	if (ret < 0) { SysMessage(_("Error opening CD-ROM plugin!")); return -1; }
-	
-	ret = GPU_open(&gpuDisp, "PCSX", NULL);
-	if (ret < 0) { SysMessage(_("Error opening GPU plugin!")); return -1; }
-
-
-	ret = SPU_open();
-	if (ret < 0) { SysMessage(_("Error opening SPU plugin!")); return -1; }
-	SPU_registerCallback(SPUirq);
-
-	ret = PAD1_open(&gpuDisp);
-	if (ret < 0) { SysMessage(_("Error opening Controller 1 plugin!")); return -1; }
-	ret = PAD2_open(&gpuDisp);
-	if (ret < 0) { SysMessage(_("Error opening Controller 2 plugin!")); return -1; }
-
-	return 0;
+void SignalExit(int sig)
+{
+    ClosePlugins();
 }
 
-int OpenPlugins() {
-	int ret;
+#define PARSEPATH(dst, src)            \
+    ptr = src + strlen(src);           \
+    while (*ptr != '\\' && ptr != src) \
+	ptr--;                         \
+    if (ptr != src)                    \
+    {                                  \
+	strcpy(dst, ptr + 1);          \
+    }
 
-	while ((ret = _OpenPlugins()) == -2) {
-		//ReleasePlugins();
-		LoadMcds(Config.Mcd1, Config.Mcd2);
-		if (LoadPlugins() == -1) return -1;
-	}
-	return ret;
+int _OpenPlugins()
+{
+    int ret;
+
+    GPU_clearDynarec(clearDynarec);
+
+    ret = CDR_open();
+    if (ret < 0)
+    {
+	SysMessage(_("Error opening CD-ROM plugin!"));
+	return -1;
+    }
+
+    ret = GPU_open(&gpuDisp, "PCSX", NULL);
+    if (ret < 0)
+    {
+	SysMessage(_("Error opening GPU plugin!"));
+	return -1;
+    }
+
+    ret = SPU_open();
+    if (ret < 0)
+    {
+	SysMessage(_("Error opening SPU plugin!"));
+	return -1;
+    }
+    SPU_registerCallback(SPUirq);
+
+    ret = PAD1_open(&gpuDisp);
+    if (ret < 0)
+    {
+	SysMessage(_("Error opening Controller 1 plugin!"));
+	return -1;
+    }
+    ret = PAD2_open(&gpuDisp);
+    if (ret < 0)
+    {
+	SysMessage(_("Error opening Controller 2 plugin!"));
+	return -1;
+    }
+
+    return 0;
 }
 
-void ClosePlugins() {
-	int ret;
+int OpenPlugins()
+{
+    int ret;
 
-	ret = CDR_close();
-	if (ret < 0) { SysMessage(_("Error closing CD-ROM plugin!")); return; }
-	ret = SPU_close();
-	if (ret < 0) { SysMessage(_("Error closing SPU plugin!")); return; }
-	ret = PAD1_close();
-	if (ret < 0) { SysMessage(_("Error closing Controller 1 Plugin!")); return; }
-	ret = PAD2_close();
-	if (ret < 0) { SysMessage(_("Error closing Controller 2 plugin!")); return; }
-	ret = GPU_close();
-	if (ret < 0) { SysMessage(_("Error closing GPU plugin!")); return; }
+    while ((ret = _OpenPlugins()) == -2)
+    {
+	//ReleasePlugins();
+	LoadMcds(Config.Mcd1, Config.Mcd2);
+	if (LoadPlugins() == -1)
+	    return -1;
+    }
+    return ret;
+}
+
+void ClosePlugins()
+{
+    int ret;
+
+    ret = CDR_close();
+    if (ret < 0)
+    {
+	SysMessage(_("Error closing CD-ROM plugin!"));
+	return;
+    }
+    ret = SPU_close();
+    if (ret < 0)
+    {
+	SysMessage(_("Error closing SPU plugin!"));
+	return;
+    }
+    ret = PAD1_close();
+    if (ret < 0)
+    {
+	SysMessage(_("Error closing Controller 1 Plugin!"));
+	return;
+    }
+    ret = PAD2_close();
+    if (ret < 0)
+    {
+	SysMessage(_("Error closing Controller 2 plugin!"));
+	return;
+    }
+    ret = GPU_close();
+    if (ret < 0)
+    {
+	SysMessage(_("Error closing GPU plugin!"));
+	return;
+    }
 }

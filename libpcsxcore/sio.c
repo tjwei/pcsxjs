@@ -407,8 +407,10 @@ void CreateMcd(char *mcd) {
 	int i = 0, j;
 
 	f = fopen(mcd, "wb");
-	if (f == NULL)
+	if (f == NULL) {
+		printf("unable to create %s\n", mcd);
 		return;
+	}
 
 	if (stat(mcd, &buf) != -1) {
 		if ((buf.st_size == MCD_SIZE + 3904) || strstr(mcd, ".gme")) {
@@ -493,8 +495,7 @@ void CreateMcd(char *mcd) {
 		fputc(0, f);
 	fputc(0xe, f);
 	s--;
-
-	for (i = 0; i < 15; i++) { // 15 blocks
+	for (i = 0; i < 15; i++) { // 15 blocks	
 		fputc(0xa0, f);
 		s--;
 		fputc(0x00, f);
@@ -515,10 +516,12 @@ void CreateMcd(char *mcd) {
 		s--;
 		fputc(0xff, f);
 		s--;
+	
 		for (j = 0; j < 117; j++) {
 			fputc(0x00, f);
 			s--;
 		}
+			
 		fputc(0xa0, f);
 		s--;
 	}
@@ -554,13 +557,14 @@ void CreateMcd(char *mcd) {
 		fputc(0, f);
 
 	fclose(f);
+
 }
 
 void ConvertMcd(char *mcd, char *data) {
 	FILE *f;
 	int i = 0;
 	int s = MCD_SIZE;
-
+	printf("convertmcd %s\n", mcd);
 	if (strstr(mcd, ".gme")) {
 		f = fopen(mcd, "wb");
 		if (f != NULL) {

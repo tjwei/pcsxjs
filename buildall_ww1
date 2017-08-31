@@ -1,7 +1,7 @@
 emcc -O3 -Wno-unused-result  -o pcsx_worker.js -D USESDLSOUND -D WORKER \
- -s USE_ZLIB=1 -s AGGRESSIVE_VARIABLE_ELIMINATION=1 \
--s TOTAL_MEMORY=536870912 --llvm-lto 1 -s WASM=1 --post-js worker_funcs.js \
--s EXPORTED_FUNCTIONS="['_main',  '_pcsx_init', '_one_iter', '_get_render_param_ptr', '_set_KeyStatus']" \
+ -s USE_ZLIB=1  \
+-s TOTAL_MEMORY=440401920 --llvm-lto 1 -s WASM=1 --post-js worker_funcs.js \
+-s EXPORTED_FUNCTIONS="['_main',  '_pcsx_init', '_one_iter', '_get_ptr', '_ls', '_playcdda']" \
 -I./include -I./libpcsxcore \
 gui/workerMain.c gui/Plugin.c gui/Config.c \
 libpcsxcore/psxbios.c libpcsxcore/cdrom.c libpcsxcore/psxcounters.c \
@@ -12,8 +12,8 @@ libpcsxcore/gte.c libpcsxcore/psxhle.c  libpcsxcore/psxcommon.c \
 libpcsxcore/cdriso.c libpcsxcore/ppf.c   \
 plugins/dfxvideo/cfg.c   plugins/dfxvideo/fps.c plugins/dfxvideo/key.c \
 plugins/dfxvideo/prim.c  plugins/dfxvideo/zn.c plugins/dfxvideo/draw_null.c  \
-plugins/dfxvideo/gpu.c   plugins/dfxvideo/soft_modified.c \
-plugins/nullspu/spunull.c \
+plugins/dfxvideo/gpu.c   plugins/dfxvideo/soft.c \
+plugins/dfsound/spu.c plugins/dfsound/cfg.c  plugins/dfsound/dma.c plugins/dfsound/registers.c plugins/dfsound/worker.c \
 plugins/sdlinput/cfg.c     plugins/sdlinput/pad_worker.c     \
 plugins/sdlinput/analog.c \
  -lm

@@ -20,8 +20,11 @@
 
 #include "externals.h"
 #include <SDL/SDL.h>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+#define BUFFER_SIZE		(22050+4096)
 
-#define BUFFER_SIZE		22050
 
 short			*pSndBuffer = NULL;
 int				iBufSize = 0;
@@ -29,6 +32,7 @@ volatile int	iReadPos = 0, iWritePos = 0;
 
 static void SOUND_FillAudio(void *unused, Uint8 *stream, int len) {
 	short *p = (short *)stream;
+	int lBytes=0;
 
 	len /= sizeof(short);
 
@@ -36,8 +40,11 @@ static void SOUND_FillAudio(void *unused, Uint8 *stream, int len) {
 		*p++ = pSndBuffer[iReadPos++];
 		if (iReadPos >= iBufSize) iReadPos = 0;
 		--len;
+		lBytes+=2;
 	}
-
+	#ifdef __EMSCRIPTEN__
+    EM_ASM_({pcsx_worker.postMessage({cmd:"soundBytes", lBytes: $0});}, lBytes);
+	#endif
 	// Fill remaining space with zero
 	while (len > 0) {
 		*p++ = 0;
@@ -121,12 +128,18 @@ unsigned long SoundGetBytesBuffered(void) {
 
 void SoundFeedStreamData(unsigned char *pSound, long lBytes) {	
 	short *p = (short *)pSound;
+	long old_lBytes=lBytes;
 	//printf("soundfeedstreamdata %ld\n",lBytes);
 
 	if (pSndBuffer == NULL) return;
 
 	while (lBytes > 0) {
-		if (((iWritePos + 1) % iBufSize) == iReadPos) break;
+		if (((iWritePos + 1) % iBufSize) == iReadPos) {
+			//printf("sound buffer full\n");
+			#ifdef __EMSCRIPTEN__
+			EM_ASM_({pcsx_worker.postMessage({cmd:"soundBytes", lBytes: $0});}, old_lBytes-lBytes);
+			#endif
+			break;}
 
 		pSndBuffer[iWritePos] = *p++;
 

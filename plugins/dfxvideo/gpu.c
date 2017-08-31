@@ -430,7 +430,6 @@ long CALLBACK GPUshutdown()                            // GPU SHUTDOWN
 ////////////////////////////////////////////////////////////////////////
 // Update display (swap buffers)
 ////////////////////////////////////////////////////////////////////////
-int updated_display=0;
 void updateDisplay(void)                               // UPDATE DISPLAY
 {
  if(PSXDisplay.Disabled)                               // disable?
@@ -478,7 +477,6 @@ void updateDisplay(void)                               // UPDATE DISPLAY
  else                                                  // no skip ?
   {
    DoBufferSwap();                                     // -> swap
-   updated_display = 1;
   }
 }
 
@@ -676,6 +674,42 @@ void CALLBACK GPUcursor(int iPlayer,int x,int y)
 ////////////////////////////////////////////////////////////////////////
 // update lace is called evry VSync
 ////////////////////////////////////////////////////////////////////////
+
+
+void CALLBACK GPUupdateLace0(void)                      // VSYNC
+{
+ if(!(dwActFixes&1))
+  lGPUstatusRet^=0x80000000;                           // odd/even bit
+
+  CheckFrameRate();
+}
+void CALLBACK GPUupdateLace1(void)                      // VSYNC
+{
+ if(PSXDisplay.Interlaced)                             // interlaced mode?
+  {
+   if(bDoVSyncUpdate && PSXDisplay.DisplayMode.x>0 && PSXDisplay.DisplayMode.y>0)
+    {
+     updateDisplay();
+    }
+  }
+ else                                                  // non-interlaced?
+  {
+   if(dwActFixes&64)                                   // lazy screen update fix
+    {
+     if(bDoLazyUpdate && !UseFrameSkip) 
+      updateDisplay(); 
+     bDoLazyUpdate=FALSE;
+    }
+   else
+    {
+     if(bDoVSyncUpdate && !UseFrameSkip)               // some primitives drawn?
+      updateDisplay();                                 // -> update display
+    }
+  }
+
+ bDoVSyncUpdate=FALSE;                                 // vsync done
+}
+
 
 void CALLBACK GPUupdateLace(void)                      // VSYNC
 {

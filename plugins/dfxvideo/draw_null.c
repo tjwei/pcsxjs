@@ -64,11 +64,19 @@ void CreateDisplay(void)
 }
 
 
-
+#include <emscripten.h>
 void DoBufferSwap(void)
 {  
    // printf("%d %d %d %d\n", PSXDisplay.DisplayPosition.x, PSXDisplay.DisplayPosition.y, PreviousPSXDisplay.Range.x1, PreviousPSXDisplay.DisplayMode.y);
-
+   EM_ASM_({render($0,$1,$2,$3,$4,$5,$6);},
+   PSXDisplay.DisplayPosition.x,
+   PSXDisplay.DisplayPosition.y,
+   PreviousPSXDisplay.Range.x1,
+   PreviousPSXDisplay.DisplayMode.y,
+   PSXDisplay.DisplayMode.x,
+   PSXDisplay.DisplayMode.y,
+   PSXDisplay.RGB24
+   );
 }
 
 void DoClearScreenBuffer(void)                         // CLEAR DX BUFFER
@@ -89,18 +97,21 @@ void CloseDisplay(void)
 {
  DestroyDisplay();
 }
-
-void * render_params_ptrs[] ={&(PSXDisplay.DisplayPosition.x), 
+extern unsigned long SoundGetBytesBuffered_value;
+void *get_PadState_ptr();
+void * params_ptrs[] ={&(PSXDisplay.DisplayPosition.x), 
                     &(PSXDisplay.DisplayPosition.y),
                     &(PreviousPSXDisplay.Range.x1),
                     &(PreviousPSXDisplay.DisplayMode.y),
-                    &PSXDisplay.RGB24                              
+                    &PSXDisplay.RGB24,
+                    &PSXDisplay.DisplayMode.x,
+                    &PSXDisplay.DisplayMode.y,
+                    &SoundGetBytesBuffered_value                        
                     };
-void * get_render_param_ptr(int i){
-    if(i==5){
-        return psxVub;
-    }
-    return render_params_ptrs[i];
+void * get_ptr(int i){
+    if(i==-1)   return psxVub;    
+    if(i==-2) return get_PadState_ptr();
+    return params_ptrs[i];
 }
 
 

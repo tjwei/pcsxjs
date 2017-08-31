@@ -32,6 +32,10 @@
 #include <sys/time.h>
 #endif
 #endif
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 #include <sys/time.h>
 
 static FILE *cdHandle = NULL;
@@ -56,6 +60,7 @@ static pthread_t threadid;
 #endif
 
 static unsigned int initial_offset = 0;
+
 static volatile boolean playing = FALSE;
 static boolean cddaBigEndian = FALSE;
 static volatile unsigned int cddaCurOffset = 0;
@@ -138,6 +143,124 @@ static long GetTickCount(void) {
 #endif
 
 // this thread plays audio data
+#ifdef ____EMSCRIPTEN__
+
+void playcdda()
+{
+	
+	long			t, d, i, s;
+	unsigned char	tmp;
+	 
+
+
+		t = GetTickCount() + CDDA_FRAMETIME;
+
+		if (subChanMixed) {
+			printf("subChanMixed\n");
+			s = 0;
+
+			for (i = 0; i < sizeof(sndbuffer) / CD_FRAMESIZE_RAW; i++) {
+				// read one sector
+				d = fread(sndbuffer + CD_FRAMESIZE_RAW * i, 1, CD_FRAMESIZE_RAW, cddaHandle);
+				if (d < CD_FRAMESIZE_RAW) {
+					break;
+				}
+
+				s += d;
+
+				// skip the subchannel data
+				fseek(cddaHandle, SUB_FRAMESIZE, SEEK_CUR);
+			}
+		}
+		else {
+			s = fread(sndbuffer, 1, sizeof(sndbuffer), cddaHandle);
+			printf("read s %ld\n",s);
+		}
+
+		if (s == 0) {
+			playing = FALSE;
+			fclose(cddaHandle);
+			cddaHandle = NULL;
+			initial_offset = 0;
+			printf("end playcdda\n");
+			return;
+		}
+
+		if (!cdr.Muted && playing) {
+			if (cddaBigEndian) {
+				for (i = 0; i < s / 2; i++) {
+					tmp = sndbuffer[i * 2];
+					sndbuffer[i * 2] = sndbuffer[i * 2 + 1];
+					sndbuffer[i * 2 + 1] = tmp;
+				}
+			}
+
+			SPU_playCDDAchannel((short *)sndbuffer, s);
+		}
+
+		cddaCurOffset += s;
+
+
+		d = t - (long)GetTickCount();
+		if (d <= 0) {
+			d = 1;
+		}
+		else if (d > CDDA_FRAMETIME) {
+			d = CDDA_FRAMETIME;
+		}
+
+		if(playing){
+			printf("playcdda %ld\n", d);
+			EM_ASM_( {setTimeout("_playcdda()", $0);}, d);
+		}
+
+}
+
+// stop the CDDA playback
+static void stopCDDA() {
+	printf("stopCDDA\n");
+	if (!playing) {
+		return;
+	}
+
+	playing = FALSE;
+
+	if (cddaHandle != NULL) {
+		fclose(cddaHandle);
+		cddaHandle = NULL;
+	}
+
+	initial_offset = 0;
+
+}
+
+// start the CDDA playback
+static void startCDDA(unsigned int offset) {
+	printf("startCDDA\n");
+	if (playing) {
+		if (initial_offset == offset) {
+			return;
+		}
+		stopCDDA();
+	}
+
+	cddaHandle = fopen(GetIsoFile(), "rb");
+	if (cddaHandle == NULL) {
+		return;
+	}
+
+	initial_offset = offset;
+	cddaCurOffset = initial_offset;
+	fseek(cddaHandle, initial_offset, SEEK_SET);
+
+	playing = TRUE;
+	playcdda();
+
+}
+
+#else
+
+
 #ifdef _WIN32
 static void playthread(void *param)
 #else
@@ -161,6 +284,7 @@ static void *playthread(void *param)
 #ifdef _WIN32
 		Sleep(d);
 #else
+		printf("sleep\n");
 		usleep(d * 1000);
 #endif
 
@@ -244,6 +368,7 @@ static void stopCDDA() {
 
 // start the CDDA playback
 static void startCDDA(unsigned int offset) {
+	printf("startCDDA\n");
 #if 0	
 	if (playing) {
 		if (initial_offset == offset) {
@@ -271,7 +396,7 @@ static void startCDDA(unsigned int offset) {
 
 #endif
 }
-
+#endif
 // this function tries to get the .toc file of the given .bin
 // the necessary data is put into the ti (trackinformation)-array
 static int parsetoc(const char *isofile) {

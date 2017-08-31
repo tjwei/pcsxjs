@@ -77,8 +77,4 @@ void CheckKeyboard() {
 		}
 	}
 }
-unsigned int get_KeyStatus(int i){
-	return g.PadState[i].KeyStatus;
-
-}
 

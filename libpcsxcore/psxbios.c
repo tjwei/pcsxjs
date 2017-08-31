@@ -223,7 +223,7 @@ struct DIRENTRY {
 	char name[20];
 	s32 attr;
 	s32 size;
-	u32 next;
+	struct DIRENTRY *next;
 	s32 head;
 	char system[4];
 };
@@ -1864,15 +1864,13 @@ void psxBios_firstfile() { // 42
 
 	strcpy(ffile, Ra0);
 	pfile = ffile+5;
-	nfile = 1;
+	nfile = 1;	
 	if (!strncmp(Ra0, "bu00", 4)) {
-		bufile(1);
-		v0 = _dir;
+		bufile(1);		
 	}
 
 	if (!strncmp(Ra0, "bu10", 4)) {
-		bufile(2);
-		v0 = _dir;
+		bufile(2);		
 	}
 
 	pc0 = ra;
@@ -1886,7 +1884,7 @@ void psxBios_nextfile() { // 43
 	struct DIRENTRY *dir = (struct DIRENTRY *)Ra0;
 	u32 _dir = a0;
 	char *ptr;
-	int i;
+	int i, matched=0;
 
 #ifdef PSXBIOS_LOG
 	PSXBIOS_LOG("psxBios_%s: %s\n", biosB0n[0x43], dir->name);

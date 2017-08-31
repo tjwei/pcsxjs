@@ -79,24 +79,12 @@ typedef uint8_t boolean;
 #define __inline inline
 
 // Enables NLS/internationalization if active
-#ifdef ENABLE_NLS
-
-#include <libintl.h>
 
 #undef _
-#define _(String) gettext(String)
-#ifdef gettext_noop
-#  define N_(String) gettext_noop (String)
-#else
-#  define N_(String) (String)
-#endif
-
-#else
 
 #define _(msgid) msgid
 #define N_(msgid) msgid
 
-#endif
 
 extern FILE *emuLog;
 extern int Log;

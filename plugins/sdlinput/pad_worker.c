@@ -330,8 +330,6 @@ long PADtest(void) {
 	return PSE_PAD_ERR_SUCCESS;
 }
 
-void set_KeyStatus(int i, unsigned int s){
-	g.PadState[i].KeyStatus = s;
-	//printf("%d %d %d\n", s, g.PadState[0].KeyStatus, g.PadState[0].JoyKeyStatus);
-
+void * get_PadState_ptr(){
+	return &(g.PadState[0]);
 }

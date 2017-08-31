@@ -1,0 +1,19 @@
+clang  -g -Wpointer-sign -Wno-unused-result -O2 -o pcsx_gl -I./include -I./libpcsxcore \
+-D USESDLSOUND \
+gui/LnxMain.c gui/Plugin.c gui/Config.c \
+libpcsxcore/psxbios.c libpcsxcore/cdrom.c libpcsxcore/psxcounters.c \
+libpcsxcore/psxdma.c libpcsxcore/disr3000a.c libpcsxcore/spu.c libpcsxcore/sio.c \
+libpcsxcore/psxhw.c libpcsxcore/mdec.c libpcsxcore/psxmem.c libpcsxcore/misc.c \
+libpcsxcore/plugins.c libpcsxcore/decode_xa.c libpcsxcore/r3000a.c libpcsxcore/psxinterpreter.c \
+libpcsxcore/gte.c libpcsxcore/psxhle.c  libpcsxcore/psxcommon.c \
+libpcsxcore/cdriso.c libpcsxcore/ppf.c   \
+plugins/dfOpenGL/cfg.c   plugins/dfOpenGL/fps.c plugins/dfOpenGL/gllog.c \
+plugins/dfOpenGL/primitive_drawing.c  plugins/dfOpenGL/GPU.c  \
+plugins/dfsound/sdl.c plugins/dfsound/spu.c plugins/dfsound/cfg.c  plugins/dfsound/dma.c plugins/dfsound/registers.c \
+plugins/sdlinput/cfg.c     plugins/sdlinput/pad.c     plugins/sdlinput/xkb.c  \
+plugins/sdlinput/sdljoy.c plugins/sdlinput/analog.c \
+ -lm -lSDL -lXxf86vm -lXext -lX11 -lGL
+
+# plugins/nullspu/spunull.c \
+#plugins/dfsound/sdl.c plugins/dfsound/dma.c plugins/dfsound/freeze.c plugins/dfsound/cfg.c \
+#plugins/dfsound/spu.c  plugins/dfsound/xa.c plugins/dfsound/registers.c \

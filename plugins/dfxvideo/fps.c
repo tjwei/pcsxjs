@@ -69,12 +69,13 @@ unsigned long timeGetTime()
  gettimeofday(&tv, 0);                                 // well, maybe there are better ways
  return tv.tv_sec * 100000 + tv.tv_usec/10;            // to do that, but at least it works
 }
-
+long updated_display =-1;
 void FrameCap (void)
 {
  static unsigned long curticks, lastticks, _ticks_since_last_update;
  static unsigned int TicksToWait = 0;
  int overslept=0, tickstogo=0;
+ updated_display = 0;
  BOOL Waiting = TRUE;
 
   {
@@ -107,8 +108,11 @@ void FrameCap (void)
          TicksToWait = dwFrameRateTicks - overslept;
          return;
         }
-	if (tickstogo >= 200 && !(dwActFixes&16))
-		usleep(tickstogo*10 - 200);
+	if (tickstogo >= 30 && !(dwActFixes&16))
+		{//printf("fps sleep\n");
+    updated_display = tickstogo*10 - 300;
+    //usleep(tickstogo*10 - 200); 
+    }
       }
     }
   }
@@ -219,7 +223,10 @@ void FrameSkip(void)
 
 	tickstogo = dwWaitTime - _ticks_since_last_update;
 	if (tickstogo-overslept >= 200 && !(dwActFixes&16))
-		usleep(tickstogo*10 - 200);
+		{
+      //printf("fps sleep2\n");
+    
+    usleep(tickstogo*10 - 200);}
       }
     }
    overslept = _ticks_since_last_update - dwWaitTime;
@@ -328,7 +335,7 @@ void SetAutoFrameCap(void)
  if(iFrameLimit==1)
   {
    fFrameRateHz = fFrameRate;
-   dwFrameRateTicks=(TIMEBASE*100 / (unsigned long)(fFrameRateHz*100));
+   dwFrameRateTicks=(TIMEBASE*100 / (unsigned long)(fFrameRateHz*100));   
    return;
   }
 
@@ -343,6 +350,7 @@ void SetAutoFrameCap(void)
    fFrameRateHz = PSXDisplay.PAL?50.0f:59.94f;
    dwFrameRateTicks=(TIMEBASE*100 / (unsigned long)(fFrameRateHz*100));
   }
+  printf("SetAutoFrameCap %d %f\n", dwFrameRateTicks, fFrameRateHz);
 }
 
 void SetFPSHandler(void)
