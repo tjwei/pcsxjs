@@ -1,0 +1,6 @@
+mv pcsx_ww.js pcsx_worker.js *.wasm tmp
+git checkout gh-pages
+git checkout master -- pcsx_ui.js pcsx.css
+git show master:pcsx_ww.html > index.html
+mv tmp/* .
+
