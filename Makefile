@@ -22,7 +22,7 @@ WORKER_FLAGS= --post-js worker_funcs.js -s TOTAL_MEMORY=419430400 -s EXPORTED_FU
 UI_EXPORT="['_main','_get_ptr', '_render','_LoadPADConfig', '_CheckKeyboard', '_CheckJoy', '_SoundFeedStreamData', '_SoundGetBytesBuffered']"
 UI_OBJS=plugins/sdlinput/cfg.o plugins/sdlinput/xkb.o gui/wwGUI.o \
 plugins/sdlinput/sdljoy.o plugins/sdlinput/analog.o plugins/dfsound/sdl.o  
-UI_FLAGS=--llvm-lto 1 -s EXPORTED_FUNCTIONS=$(UI_EXPORT) -s TOTAL_MEMORY=83886080
+UI_FLAGS=--llvm-lto 1 -s EXPORTED_FUNCTIONS=$(UI_EXPORT) -s TOTAL_MEMORY=16777216
 
 
 ALL: pcsx_worker.js pcsx_ww.js
