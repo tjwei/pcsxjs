@@ -93,9 +93,11 @@ var pcsx_init = Module.cwrap("pcsx_init", "number", ["string"])
 var ls = Module.cwrap("ls", "null", ["string"])
 var padStatus1;
 var isoDB;
+var stdout_array;
 var readfile_and_run = function (iso_name, blob) {
 	var run_arr = function (arr) {
-		Module.FS_createDataFile("/", iso_name, arr, true, true);
+		//Module.FS_createDataFile("/", iso_name, arr, true, true);
+		stdout_array = arr;
 		Module.setStatus('Running!');
 		pcsx_init("/" + iso_name);
 		padStatus1 = _get_ptr(-2);
