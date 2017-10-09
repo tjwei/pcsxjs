@@ -67,13 +67,13 @@ var pSound_arrs = [];
 var SendSound = function (pSound_ptr, lBytes) {
 	var pSound_arr;
 	var pSound_src = Module.HEAPU8.subarray(pSound_ptr, pSound_ptr + lBytes);
-	while (pSound_arrs.length > 30) {
+	while (pSound_arrs.length > 50) {
 		pSound_arrs.pop();
 	}
 	if (pSound_arrs.length > 0) {
 		pSound_arr = pSound_arrs.pop();
 	} else {
-		pSound_arr = new Uint8Array(4096);
+		pSound_arr = new Uint8Array(4800);
 	}
 
 	pSound_arr.set(pSound_src);
